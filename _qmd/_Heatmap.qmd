@@ -1,0 +1,13 @@
+
+### Heatmap 
+
+A heatmap of the top 1000 variable CpG probes across samples was created to help identify possible patterns and differences in methylation levels. Standard deviation was the statistical measure used to select top probes. You can check for other heatmaps created with the top 100, 5000 and 10000 CpG probes in the following directory: 
+
+```{r}
+# Display the Heatmap folder path
+paths$heatmap_folder
+```
+
+
+
+![Heatmap](`r file.path(paths$heatmap_folder, paste0(values_row$data_names,"_heatmap_1000.png"))`){#fig-Heatmap}

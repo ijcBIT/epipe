@@ -121,15 +121,38 @@ filter_dmrs <- function(dmrs, p.value = 0.01, mDiff = 0.2, min.cpg = 5, s = FALS
 #' @author Izar de Villasante
 #'
 
-summary_dmrs <- function(dmrs, path = "/results/dmrs/", write = TRUE) {
+summary_dmrs <- function(dmrs, path = "/results/dmrs/", write = FALSE) {
   dmrs[, Type := ifelse(meandiff > 0, "Hyper", "Hypo")]
-  dmrs.l <- dmrs[, .(Hyper.DMRS = sum(Type == "Hyper"), Hypo.DMRS = sum(Type == "Hypo")), by = c("Contrast")]
-  genes.l <- dmrs[, .(Hyper.Genes = length(unique(unlist(strsplit(overlapping.genes[Type == "Hyper"], ",")))),
-                      Hypo.Genes = length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))), by = c("Contrast")]
+  dmrs.l <- dmrs[, .(Total_DMRS=.N,Hyper_DMRS = sum(Type == "Hyper"), Hypo_DMRS = sum(Type == "Hypo")), by = c("Contrast")]
+  genes.l <- dmrs[, .(Total_Genes_DMRS=length(unique(unlist(strsplit(overlapping.genes,',')))),Hyper_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hyper"], ",")))),
+                      Hypo_Genes_DMRS = length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))), by = c("Contrast")]
   summary <- merge(dmrs.l, genes.l)
+  
+  # Order the data frame:
+  library(dplyr)
+  
+  summary <- summary %>%
+    select(Contrast, matches("^Total"),matches("Hyper"),matches("Hypo"))
+  
+  
   if (write) data.table::fwrite(summary, path)
   return(summary)
 }
+
+# summary_df <- dmrs %>%
+#   group_by(Contrast) %>%
+#   summarize(
+#     Total_DMRs = n(),
+#     Total_genes = length(unique(unlist(strsplit(overlapping.genes, ',')))),# Total number of rows per Contrast
+#     Hyper_DMRs = sum(Type == 'Hyper'), # Total number of rows with Type 'Hyper'
+#     Hyper_genes= length(unique(unlist(strsplit(overlapping.genes[Type == "Hyper"], ",")))),
+#     Hypo_DMRs = sum(Type == 'Hypo'), # Total number of rows with Type 'Hypo'
+#     Hypo_genes=length(unique(unlist(strsplit(overlapping.genes[Type == "Hypo"], ","))))
+#   )
+# 
+
+
+
 
 
 #' Make Ribbon Names

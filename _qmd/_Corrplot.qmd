@@ -1,0 +1,11 @@
+#### Correlation Plot
+
+Correlates principal components to sample sheet variables and test significancies of these. 
+
+```{r}
+# Display the Heatmap folder path
+paths$corrplot_folder
+```
+
+
+![Correlation plot](`r file.path(paths$corrplot_folder, paste0('/1000/',values_row$data_names,"_pca_corrplot1000.png.png"))`){#fig-Heatmap}

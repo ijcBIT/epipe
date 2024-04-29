@@ -14,7 +14,7 @@
 #'
 #' @return A data.table containing pathway analysis results for all contrasts.
 #'
-#' @author izar de Villasante
+#' @author izar de Villasante and Marina Vilardell
 #' @export
 #' @import gprofiler2
 #' @import data.table
@@ -47,16 +47,18 @@
 #'
 #' @keywords pathway enrichment DMRs methylation gprofiler2 data.table
 #'
-pathway <- function(dmrs, path = "results/pathways.csv", cols = c("term_size", "query_size", "intersection_size"), pval = 0.05, topN = 50, savefile = FALSE) {
+pathway <- function(dmrs, path = "results/pathways.csv", cols = c("term_size", "query_size", "intersection_size"), pval = 0.05, topN = 50, savefile = FALSE,re.folder ='./',enrich_plots=FALSE) {
   require(gprofiler2)
   require(data.table)
+  require(ggplot2)
 
   # Loop through each unique contrast in the "Contrast" column of dmrs
   pathways <- lapply(unique(dmrs$Contrast), function(cont) {
 
     # Perform pathway analysis using gprofiler2::gost
-    p <- gprofiler2::gost(signif = TRUE, unique(dmrs[Contrast == cont, Gene], user_threshold = pval))[[1]]
-
+    p2 <- gprofiler2::gost(signif = TRUE, unique(dmrs[Contrast == cont, Gene], user_threshold = pval),sources = c('GO:MF','GO:CC','GO:BP','KEGG','REAC','TF','HP'))
+    
+    p<-p2[[1]]
     # Convert the result to a data.table
     dth <- data.table::as.data.table(p)
 
@@ -81,13 +83,41 @@ pathway <- function(dmrs, path = "results/pathways.csv", cols = c("term_size", "
         savefile = savefile
       )
     }
-
+    
+    if (!is.null(p2) & enrich_plots==TRUE){  
+      p2$result$query<-cont
+      #Make interactive plots 
+      enrichplot_interactive<-gostplot(p2,capped=FALSE,interactive = TRUE)
+      htmlwidgets::saveWidget(enrichplot_interactive,file = file.path(re.folder,paste0('enrichplot_interactive_',cont,'.html')))
+      
+      #Make static plots 
+      enrichplot_static<-gostplot(p2,capped=FALSE,interactive = FALSE)
+      save_plot(enrichplot_static, path = re.folder, filename = paste0('enrichplot_static_',cont))
+      
+      #Select top 3 pathways per each category
+      library(dplyr)
+      top_results<- p2$result %>%
+        group_by(source)  %>%
+        slice_min(order_by = p_value, n = 3)
+      
+      #highlight the terms and create a table
+      
+      
+      png(file=file.path(re.folder,paste0('table_plot_',cont,'.png')),width=1000,height = 1000)
+      publish_gostplot(enrichplot_static, highlight_terms = top_results$term_id)
+      dev.off() 
+      
+      
+      #save_plot(publish_gos, path = re.folder, filename = paste0('highlight_table_plot_',cont))
+     
+    }
+   
     return(pat)
   })
 
   # Combine results for all contrasts into a single data.table
   result <- do.call("rbind", pathways)
-
+  
   return(result)
 }
 

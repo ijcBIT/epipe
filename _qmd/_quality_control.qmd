@@ -1,42 +1,180 @@
 <!-- # Increment the index -->
 `r idx = idx+1` 
 <!-- # Generate a dynamic step title -->
-## `r paste0("Step ",idx,": Quality Control and Filtering")`
+## `r paste0("Step ", idx,". Quality Control")`
 
-### Signal distribution:
 
-::: {#fig-qc-distribution layout="[70, 30]" }
+```{r}
+# Display the QC folder path
+paths$qc_folder
+```
 
-![density_plot](`r file.path(paths$qc_folder, "density_plot.png")`){#fig-density_plot}
 
-![bean_plot](`r file.path(paths$qc_folder, "bean_plot.png")`){#fig-bean_plot}
+Quality control ensures the reliability and accuracy of the methylation data, by identifying potential sources of bias and noise stemming from the microarray experiment.
 
-:::
 
 ### Signal quality:
 
-::: {#fig-qc-quality layout-nrow=1 }
+To check the quality of the experiment, the total signal from each probe (methylated+unmethylated, derived from red and green channel) is evaluated against the background signal distribution derived from a set of negative control probes. Low p-values suggest a more reliable signal (higher signal-to-noise ratio), higher p-values indicated higher background noise and lower signal reliability. 
 
-![mean_detection](`r file.path(paths$qc_folder, "mean_detection_pvalues.jpeg")`){#fig-bean_plot}
+The following plot shows the mean detection p-value for each sample (p <0.001 is recommended, samples with higher values should be excluded): 
 
-![mean_qc](`r file.path(paths$qc_folder, "mean_qc.png")`){#fig-mean_qc}
+![Mean detection p-value](`r file.path(paths$qc_folder, "mean_detection_pvalues.jpeg")`){#fig-mean width=80%}
 
+
+Another quality metric is the ratio of the median methylated and unmethylated signal intensities. In the plot below ‘good’ samples will cluster together; ‘bad’ samples will fall into the left lower corner. 
+
+![Mean quality control plot](`r file.path(paths$qc_folder, "mean_qc.png")`){#fig-mean_qc}
+
+
+For a comprehensive qc report including the validation of specific experimental steps you can check the pdf provided by minfi [here](`r file.path(paths$qc_folder, "Report.pdf")`).
+
+
+
+### Normalization:
+
+Plotting the distribution of beta values (methylated/(methylated+unmethylated)) before and after signal normalization provides a good indicator of the sample homogeneity and if the normalization is appropriate for the data set. The correct normalization should homogenize the distribution and make the samples more comparable.
+
+Recommendations: 
+
+Noob= normal-exponential out-of-band background correction, a simple way to estimate and correct for background binding. 
+
+ssNoob = suitable for incremental preprocessing of individual methylation arrays, should be used when integrating data from multiple generations of Infinium methylation arrays. 
+
+funNorm()= based on control probes to aijust between-array variation: if global biological differences are present (e.g. cancer normal); function includes Noob as first step 
+
+PreprocessSWAN() = subset-quantile within array normalization correcting for the technical differences between the Type I and Type II array designs separately for different subsets of probes (divided by CpG content). 
+
+PreprocessQuantile() = stratified quantile normalization preprocessing applied to the methylated and unmethylated intensities separately. The distribution of type I and type II signals is forced to be the same by first quantile normalizing the type II probes across samples and then interpolating a reference distribution to which we normalize the type I probes. 
+
+::: {#fig-densityplots layout="[50,50]"}
+![](`r file.path(paths$qc_folder, "density_plot_before_norm.png")`)
+
+![](`r file.path(paths$qc_folder, "density_plot_after_norm.png")`)
+
+Beta values distribution
 :::
 
-For a full report you can check the pdf provided by minfi [here](`r file.path(paths$qc_folder, "Report.pdf")`) 
 
-### Removed data:
+
+### Sex:
+
+Sex specific DNA methylation differences are are well known (sex is a common co-variate in EWAS studies). Therefore, it pays to include sex as a factor in the downstream analysis. Sex can be predicted based the methylation of sex chromosomes if gender information is not available or as simply control. 
+
+The plot below shows the sex predicted (The information is added to the metadata).
+
+
+![Sex estimation](`r file.path(paths$sexplot_folder, "sex_distribution.png")`){#fig-density_plot}
 
 ```{r}
-# eval(
-#   substitute(
-#     filtered <- tar_read(filtered_rgSet),
-#     env = list(filtered_rgSet=paste0("filtered_",values_row$data_names))
-#     )
-#   )
-filtered <- tar_read(filtered)
-metadata(filtered)$bad_samples
-metadata(filtered)$bad_probes
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+#clean<-tar_read(clean_ex_EPICv2)
+
+df<-colData(clean)
+subset_df <- df[, c("Sample_Name", "Sample_Group", "predictedSex")]
+
+# Convert subset_df to a data frame
+subset_df <- as.data.frame(subset_df)
+
+# Remove row names
+rownames(subset_df) <- NULL
+
+# Use dtable with the converted data frame
+dtable(subset_df)
+
+
 ```
+
+
+
+### Filtering:
+
+
+```{r}
+ eval(
+   substitute(
+     filtered <- tar_read(filtered_rgSet),
+     env = list(filtered_rgSet=paste0("filtered_",values_row$data_names))
+     )
+   )
+
+
+ eval(
+   substitute(
+     clean <- tar_read(clean_n),
+     env = list(clean_n=paste0("clean_",values_row$data_names))
+     )
+   )
+
+
+
+#filtered <- tar_read(filtered_ex_EPICv2)
+#clean <- tar_read(clean_ex_EPICv2)
+
+```
+
+```{r, datatable=TRUE}
+bad_samples <- metadata(filtered)$bad_samples
+
+if (length(bad_samples) == 0) {
+  message<-'No bad samples were removed as all pass the quality control (n=0)'
+}else{
+  # Extract the probe names
+  probe_names <- names(bad_samples)
+  message<-paste0(length(probe_names),'samples were removed:',paste(bad_samples, collapse = ", "))
+}
+
+```
+
+- `r message`
+
+
+- All probes with low detection p-value were removed previously.
+
+Additionally,probes with confounfing factors are filtered out. Sex chromosomes, known SNPs, and cross-reactive probes are removed from the analysis by default. 
+
+```{r}
+bad_probes <- metadata(filtered)$bad_probes
+#
+#clean <- tar_read(clean_ex_EPICv2)
+
+if('removed_sex' %in% attributes(metadata(clean))$names){
+  removed_probes_sex<-metadata(clean)$removed_sex
+}else{removed_probes_sex<-NULL}
+
+if('preprocess' %in% attributes(metadata(clean))$names){
+  removed_probes_cr<-metadata(clean)$preprocess
+}else{removed_probes_cr<-NULL}
+
+if('removed_Snps' %in% attributes(metadata(clean))$names){
+  removed_probes_Snps<-metadata(clean)$removed_Snps
+}else{removed_probes_Snps<-NULL}
+
+```
+
+
+#### Summary of removed probes: 
+```{r, datatable=TRUE}
+# Sample data (replace this with your actual data)
+removed_probes <- list(
+  'Bad probes' = length(bad_probes),
+  'Probes in sex chromosomes'= length(removed_probes_sex),
+  'Probes with SNPs at CpGs' = length(removed_probes_Snps),
+  'Cross-reactive probes' =length(removed_probes_cr),
+  'Total'=(sum(length(bad_samples)+length(bad_probes)+length(removed_probes_sex)+length(removed_probes_Snps)+length(removed_probes_cr)))
+ 
+)
+
+# Convert the list to a data frame
+removed_probes_df <- data.frame(Count = unlist(removed_probes))
+
+knitr::kable(removed_probes_df,format = "html")
+```
+
 
 

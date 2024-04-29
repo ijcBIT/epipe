@@ -1,0 +1,234 @@
+
+# Differential methylation analysis
+
+Significant differences between conditions are calculated by fitting linear regression models (using the limma R-package) and testing for group differences using moderate t-statistics and the associated p-values. 
+
+Based on the experimental design, specific research and exploratory analysis, we
+ 
+ i) implement the model 
+ 
+```{r}
+ eval(
+   substitute(
+     model <- tar_read(model_n),
+     env = list(model_n=paste0("model_",values_row$data_names))
+     )
+   )
+
+#model<-tar_read(model_ex_EPICv2)
+
+contrasts_name<-colnames(model$contrasts)
+
+```
+
+
+ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
+
+
+
+
+
+<!-- # Increment the index -->
+`r idx = idx+1` 
+<!-- # Generate a dynamic step title -->
+## `r paste0("Step ",idx,": Differentially methylated CpG probes (DMPs) ")`
+
+
+```{r}
+# Display the folder path
+paths$dmp_folder
+```
+
+- Minimum mean methylation difference between groups: mdiff > 0.1 
+
+- Significantly different when: p < 0.05 
+
+
+
+### DMPs summary
+
+```{r,warning=FALSE}
+
+eval(
+   substitute(
+     dmps_f <- tar_read(dmp_f_rgset),
+     env = list(dmp_f_rgset=paste0("dmps_f_",values_row$data_names))
+     )
+   )
+
+#dmps_f<-tar_read(dmps_f_ex_EPICv2)
+
+
+if (nrow(dmps_f)>0){
+  message<-'Summary of differentially methylated probes for each contrast and type (Hyper-methylated and Hypo-methylated), and the number of associated genes:'
+}else{
+  message<-' No differential mehtylation probes were found'
+}
+
+```
+
+- `r message`
+
+```{r,warning=FALSE}
+# Table with a summary of DMPs per each type (hypo and hyper) and the number of genes associated to each
+
+eval(
+   substitute(
+     dmps_summary_pl <- tar_read(dmps_summary_p),
+     env = list(dmps_summary_p=paste0("dmps_summary_",values_row$data_names))
+     )
+   )
+
+
+#dmps_summary_n<-tar_read(dmps_summary_ex_EPICv2)
+
+if (nrow(dmps_f)>0){
+  knitr::kable(dmps_summary_pl,format = "html")
+}
+
+```
+
+
+
+
+```{r,warning=FALSE}
+# Get a data frame with selected information
+# if (nrow(dmps_f)>0){
+#   dmps_f_Genomicann_CGI <- data.frame(dmps_f[, .(ProbeID,Contrast, Type, Relation_to_Island,UCSC_RefGene_Group,UCSC_RefGene_Name)])
+# 
+#   dtable(dmps_f_Genomicann_CGI)
+# }
+
+```
+
+
+```{r}
+if (nrow(dmps_f)>0){
+  message<-'### DMP annotation: Genomic context and association with CG-islands (sequence context)'
+}else{
+  message<-NULL
+}
+
+```
+
+`r message`
+
+```{r genomic context}
+#| results: asis
+#| echo: false
+#| include: true
+
+
+if (nrow(dmps_f)>0){
+ # paths <- jsonlite::fromJSON(params$paths)
+  cat("\n")
+  d <- knitr::knit_child('_qmd/_genomic_context.qmd', quiet = TRUE)
+  cat(d, sep = "\n")
+}
+```
+
+
+### DMP genes and functional annotation (pathway enrichment) 
+
+To better understand the underlying biological implication of the identified DMPs, we perform functional enrichment analysis for genes overlapping these DMPs (DMP genes) to identify biological functions or pathways that they may be associated with. Epipe implements the gprofiler2 R-package to perform the analysis and test the following sets/databases (FDR < 0.05):
+
+- Gene Ontology (GO): Molecular Function (MF)
+
+- Gene Ontology (GO): Cellular Component (CC) 
+
+- Gene Ontology (GO): Biological Process (BP) 
+
+- KEGG 
+
+- Reactome (React) 
+
+- Human Phenotype (HP) 
+
+- Transcription Factor binding (TF) 
+
+
+```{r}
+if (nrow(dmps_f)>0){
+  message<-''
+}else{
+  message<-'No DMPs and therefore, no pathways are found'
+}
+```
+
+`r message`
+
+
+
+```{r,message=FALSE}
+# path<-paths$pathway_folder
+# 
+# custom_paths<-tar_read(custom_paths_ex_EPICv2)
+# path<-custom_paths$pathway_folder
+# file<-file.path(path,'full_summary.csv')
+# 
+# library(readr)
+# 
+# if (file.exists(file)){
+#   pathway_sheet<-read_csv(file)
+#   dtable(pathway_sheet)
+# }
+```
+
+
+
+```{r}
+if (nrow(dmps_f)>0){
+  message<-' The plots below show all significantly enriched functional terms for each contrast; each table shows the top three significant results for each category (source) '
+}else{
+  message<-NULL
+}
+```
+
+`r message`
+
+
+```{r}
+# DMP plots
+# number depending on contrasts
+#custom_paths<-tar_read(custom_paths_ex_EPICv2)
+# Get the list of contrast names
+contrast_names <- unique(dmps_f$Contrast)
+
+markdown_text <- NULL
+# Loop over each contrast
+for (contrast in contrast_names) {
+  # Generate the image file path
+  image_path <- file.path(paths$pathway_folder, paste0("DMPS/table_plot_", contrast, ".png"))
+  
+  #if file exists:
+   library(readr)
+  
+  if (file.exists(image_path)){
+    
+    # Display the image
+    markdown_text <- c(markdown_text, paste0("![", contrast, "](", image_path, ")"))
+    #cat("![",contrast,"](`r ",image_path,"`)\n\n")
+  
+  }
+}
+
+```
+
+
+
+`r markdown_text`
+
+
+
+```{r}
+if (nrow(dmps_f)>0){
+ message<-paste('An interactive version of the plots can be found here: ',paths$dmp_folder )
+ 
+ 
+}else{
+  message<-NULL
+}
+```
+
+
+`r message`

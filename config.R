@@ -1,6 +1,6 @@
 library(data.table)
 ### metadata
-author <- "Izar de Villasante"
+author <- "Izar de Villasante and Marina Vilardell"
 description <- "Test project"
 
 ### Raw data paths (Genomics Unit):
@@ -30,7 +30,17 @@ arraytype <- c(
   "EPICv2"
 )
 
-values <- data.table(cbind(data_names,data_paths,arraytype))
+project_name<-'Epipe test'
+
+values <- data.table(cbind(data_names,data_paths,arraytype,project_name))
+#values <- data.table(data_names="",data_paths="inst/extdata/EPICv2/sample_sheet_EPICv2.rds", arraytype="EPICv2")
+
+
+
+# Sample sheet:
+# Sentrix_ID must be a variable name in the sample sheet or must be included in the barcode (ex barcode: 207505140099_R08C01)
+
+
 
 # Normalization:
 norm_function <-c("noob") #
@@ -57,12 +67,18 @@ values <- values[,.(norm=rlang::syms(norm_function)),by=data_names][values,on=.(
 idcol= "Sample_Name" # column with unique sample ids.
 
 ### Color palettes:
-pal_discrete =  c(
-  "#191919", "#0075DC", "#F0A0FF", "#993F00", "#005C31", "#FFE100", "#FF0010",
-  "#FFCC99", "#808080", "#94FFB5", "#8F7C00", "#9DCC00", "#C20088", "#003380",
-  "#FFA405", "#FFA8BB", "#426600", "#2BCE48", "#4C005C", "#00998F", "#E0FF66",
-  "#740AFF", "#990000", "#FFFF80", "#5EF1F2", "#FF5005"
-)
+
+#"#1B9E77" "#D95F02" "#7570B3" "#E7298A" "#66A61E" "#E6AB02" "#A6761D" "#666666"
+
+pal_discrete =  c("#1B9E77","#7570B3","#D95F02", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666")
+
+
+#pal_discrete =  c(
+ # "#191919", "#0075DC", "#F0A0FF", "#993F00", "#005C31", "#FFE100", "#FF0010",
+ # "#FFCC99", "#808080", "#94FFB5", "#8F7C00", "#9DCC00", "#C20088", "#003380",
+ #  "#FFA405", "#FFA8BB", "#426600", "#2BCE48", "#4C005C", "#00998F", "#E0FF66",
+ # "#740AFF", "#990000", "#FFFF80", "#5EF1F2", "#FF5005"
+#)
 
 
 # models (In case a more specific model is desired). Overrides group_var & covs:
@@ -99,6 +115,7 @@ Contrasts <- NULL
 report_colab <- tibble::tibble(
   report_name = "report_colab",
   qc_include = "false",
+  corrplot_include = "false",
   parameter_tunning_plots = "false",
   code_fold = TRUE,
   show_warning = FALSE,
@@ -109,6 +126,7 @@ report_colab <- tibble::tibble(
 report_analyst <- tibble::tibble(
   report_name = "report_analyst",
   qc_include = "true",
+  corrplot_include = "true",
   parameter_tunning_plots = "true",
   code_fold = FALSE,
   show_warning = TRUE,

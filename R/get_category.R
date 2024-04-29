@@ -7,18 +7,30 @@
 #' @export
 #' @import data.table
 get_category <- function(object) {
+  
+  library(dplyr)
+  # Check if SentrixID is in the dataframe
+  
+  if (!'Sentrix_ID' %in% names(object)) {
+      # If 'Sentrix_ID' is not found and not specified by the user, extract from 'barcode'
+      object <- object %>%
+        mutate(Sentrix_ID = sub("_.*", "", barcode),
+               Sentrix_Position = sub(".*_", "", barcode))
+  }
+  
+  
   # Convert to data.table if not already in that format
   object <- data.table::setDT(object)
 
   # Define categories for columns
-  ids <- c("Sample_Name", "barcode", "Basename")
+  ids <- c("Sample_Name", "barcode", "Basename","Sentrix_Position")
   batch <- c("Sentrix_ID", "batch")
-  covs <- c("Type", "Condition")
+  covs <- c("Type", "Condition",'Age','predictedSex')
   mgroups <- c("Sample_Group")
 
-  # Get the existing category, if it exists
-  category <- attributes(object)$category
-
+  
+  category<-NULL
+  
   # If category is not defined, assign categories based on column names
   if (is.null(category)) {
     category <- ifelse(colnames(object) %in% ids, "ids",

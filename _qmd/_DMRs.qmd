@@ -1,0 +1,203 @@
+<!-- # Increment the index -->
+`r idx = idx+1` 
+<!-- # Generate a dynamic step title -->
+## `r paste0("Step ",idx,": Differentially methylated Regions (DMRs)")`
+
+
+```{r}
+# Display the QC folder path
+paths$dmrs_folder
+```
+
+
+Neighboring CpGs are known to be similarly methylated due to the enzymatic process by which CpG’s become methylated. As individual differentially methylated CpG positions may not be so informative, identifying differentially methylation regions (DMRs) provides an alternative approach. Epipe implements the R-package DMRcate for DMR detection which in turn uses linear regression models (limma package). The same model and contrasts as for the DMPs are used. 
+
+
+Thresholds used to filter DMRs: 
+
+- Minimum length: three CpGs  
+
+- Minimum mean group methylation differences: < 0.05 
+
+- Statistically different at: FDR<0.01 (default). 
+
+
+```{r}
+
+ eval(
+   substitute(
+     dmrs_f <- tar_read(dmrs_f_n),
+     env = list(dmrs_f_n=paste0("dmrs_f_",values_row$data_names))
+     )
+   )
+if (nrow(dmrs_f)>0){
+  message<-' - Summary of differentially methylated regions per each contrast:' 
+}else{
+  message<-' No differential mehtylation regions were found'
+}
+```
+
+
+`r message`
+
+
+```{r}
+
+# if (nrow(dmrs_f)>0){
+#   #dmrs_f<-tar_read(dmrs_f_ex_EPICv2)
+#   # Create a table with a summary of DMPs per each type
+# 
+#   count_dmrs<-as.data.frame(table(dmrs_f$Contrast))
+#   count_dmrs$Var1<-as.character(count_dmrs$Var1)
+#   total_row<-list(Var1 = "Total", Freq = length(dmrs_f$Contrast))
+#   count_dmrs <- rbind(count_dmrs, total_row)
+# 
+#   colnames(count_dmrs)<-c('Contrasts','Num.DMR')
+# 
+# 
+#   knitr::kable(count_dmrs,format = "html")
+# }
+
+if (nrow(dmrs_f)>0){
+  eval(
+     substitute(
+       dmrs_summary <- tar_read(dmrs_summary_n),
+       env = list(dmrs_summary_n=paste0("dmrs_summary_",values_row$data_names))
+       )
+     )
+  
+   knitr::kable(dmrs_summary,format = "html")
+}
+
+```
+
+
+
+### DMR genes and functional annotation (pathway enrichment) 
+
+To better understand the underlying biological implication of the identified DMRs, we perform functional enrichment analysis for genes overlapping these DMRs (DMR genes) to identify biological functions or pathways that they may be associated with.  Epipe implements the gprofiler2 R-package  to perform the analysis and test the following sets/databases (FDR <0.05): 
+
+- Gene Ontology (GO): Molecular Function (MF) 
+
+- Gene Ontology (GO): Cellular Component (CC) 
+
+- Gene Ontology (GO): Biological Process (BP) 
+
+- KEGG 
+
+- Reactome (React) 
+
+- Human Phenotype (HP) 
+
+- Transcription Factor binding (TF) 
+
+
+```{r}
+if (nrow(dmrs_f)>0){
+  message<-''
+}else{
+  message<-'No genes and therefore, no pathways are found'
+}
+```
+
+`r message`
+
+
+
+```{r}
+if (nrow(dmrs_f)>0){
+  message<-' The plots below show all significantly enriched functional terms for each contrast; each table shows the top three significant results for each category (source) '
+ 
+}else{
+  message<-NULL
+ 
+}
+```
+
+`r message`
+
+
+
+```{r}
+# DMP plots
+# number depending on contrasts
+#dmrs_f<-tar_read(dmrs_f_ex_EPICv2)
+markdown_text <- NULL
+if (nrow(dmrs_f)>0){
+  custom_paths<-tar_read(custom_paths_ex_EPICv2)
+  # Get the list of contrast names
+  contrast_names <- unique(dmrs_f$Contrast)
+  
+  
+  # Loop over each contrast
+  for (contrast in contrast_names) {
+    # Generate the image file path
+    image_path <- file.path(paths$pathway_folder, paste0("DMRs/table_plot_", contrast, ".png"))
+    
+    # Display the image
+    markdown_text <- c(markdown_text, paste0("![", contrast, "](", image_path, ")"))
+    #cat("![",contrast,"](`r ",image_path,"`)\n\n")
+    
+    
+  }
+}else{
+  markdown_text <- NULL
+}
+
+
+```
+
+
+`r markdown_text`
+
+
+
+
+```{r}
+if (nrow(dmrs_f)>0){
+  message<-paste('An interactive version of the plots can be found here: ',paths$dmrs_folder)
+}else{
+  message<-NULL
+}
+```
+
+
+`r message`
+
+
+
+
+### Differential methylation summary
+
+```{r}
+# Display the QC folder path
+paste0(paths$results_folder,values_row$data_names)
+```
+
+General summary of all differential methylation positions and regions per contrast and the associated genes:
+
+
+```{r,message=FALSE}
+#path<-paths$results_folder
+#custom_paths<-tar_read(custom_paths_ex_EPICv2)
+#path<-custom_paths$results_folder
+
+
+eval(
+   substitute(
+     summary_f <- tar_read(summaries_n),
+     env = list(summaries_n=paste0("sumaries_",values_row$data_names))
+     )
+   )
+
+ knitr::kable(summary_f,format = "html")
+
+
+
+
+
+```
+
+
+
+

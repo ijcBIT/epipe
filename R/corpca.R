@@ -17,7 +17,22 @@
 corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
                    path = "./", filename = "", title = 'PC1-6 clinical correlations') {
   requireNamespace("PCAtools")
+  
+  #Check if the columns are present in the data frame and remove them if they are.
+  if ("Basename" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -Basename)
+  }
+  if ("barcode" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -barcode)
+  }
+  if ("Sample_Name" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -Sample_Name)
+  }
+  if ("Sentrix_Position" %in% colnames(metadata)) {
+    metadata <- subset(metadata, select = -Sentrix_Position)
+  }
 
+  
   # Convert metadata to data frame
   metadata <- data.frame(metadata, stringsAsFactors = TRUE)
   rownames(metadata) <- metadata[[idcol]]
@@ -33,7 +48,9 @@ corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
 
   # Filter vars based on unique values
   vars <- vars[sapply(p$metadata[, vars], function(x) length(unique(x)) > 1)]
-
+  
+  #par(cex.main = 0.8)  
+  
   # Generate eigencorplot
   pcaplt <- PCAtools::eigencorplot(
     p,
@@ -50,7 +67,8 @@ corpca <- function(beta_top100, metadata, vars = NULL, idcol = "barcode",
     scale = TRUE,
     main = title,
     colFrame = 'white',
-    plotRsquared = FALSE
+    plotRsquared = FALSE,
+    cexMain = 0.8
   )
 
   # Save the plot

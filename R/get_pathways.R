@@ -26,7 +26,7 @@ get_pathways <- function(dmrs, res.folder = "results/pathways/", cols = c("term_
     if (savefile == TRUE) suppressWarnings(dir.create(res.folder))
 
     # Obtain pathway results for all, hyper, and hypo DMRs
-    full_pathways <- pathway(dmrs[, .SD, .SDcols = c("Gene", "Contrast")], cols = cols, pval = pval, topN = topN)
+    full_pathways <- pathway(dmrs[, .SD, .SDcols = c("Gene", "Contrast")], cols = cols, pval = pval, topN = topN,re.folder=res.folder,enrich_plots=TRUE)
     if(nrow(full_pathways) == 0) full_pathways <- empty_dt
     if (savefile == TRUE) data.table::fwrite(full_pathways, file.path(res.folder, "full_pathway.csv"))
 

@@ -65,8 +65,11 @@ plotDMP <- function(DMPann, names= c( "DMP_count.png","DMP_count_facet.png","DMP
     DMPann$UCSC_RefGene_Group[which(DMPann$UCSC_RefGene_Group == "")] <- "."
     DMP_annGenomic <- DMPann[, .(UCSC_RefGene_Group_short = unlist(lapply(strsplit(UCSC_RefGene_Group, ";"), '['))),
                              by = c("Contrast", "Type")]
-
-    g4 <- ggplot2::ggplot(DMP_annGenomic, aes(Contrast, fill = UCSC_RefGene_Group_short)) +
+    
+    DMP_annGenomic$USCS_refgene_Group_summary<-ifelse(startsWith(DMP_annGenomic$UCSC_RefGene_Group_short,'exon'),'EXON',DMP_annGenomic$UCSC_RefGene_Group_short)
+    #DMP_annGenomic$USCS_refgene_Group_summary<-ifelse(DMP_annGenomic$USCS_refgene_Group_summary=='.','NO INFORMATION',DMP_annGenomic$USCS_refgene_Group_summary)
+    
+    g4 <- ggplot2::ggplot(DMP_annGenomic, aes(Contrast, fill = USCS_refgene_Group_summary)) +
       facet_wrap(. ~ Type, scales = "free_x") +
       geom_bar(position = "fill", width = 0.8) +
       theme_bw() +

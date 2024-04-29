@@ -1,0 +1,27 @@
+<!-- # Increment the index -->
+`r idx = idx+1` 
+<!-- # Generate a dynamic step title -->
+## `r paste0("Step ",idx,": Exploratory analysis")`
+
+The aim of the exploratory analysis is to visualize data to gain insights into its characteristics and identify potential patterns or outliers. 
+
+### PCA
+
+A Principal Component analysis is performed to reduce the dimensionality of methylation data and visualize sample clusters in a lower-dimensional space. 
+
+The following plot is done for the PCA analysis performed using the top 1000 CpGs. If you want to visualize other PCA plots done with 100, 5000 or 10000 CpGs, check the plots located in the following directory: 
+
+```{r}
+# Display the Heatmap folder path
+paths$bplots_folder
+```
+
+
+::: {#fig-pca layout="[50,50]"}
+
+![](`r file.path(paths$bplots_folder, paste0(values_row$data_names,"_pc_plot1000PC1PC2.png"))`)
+
+![](`r file.path(paths$bplots_folder, paste0(values_row$data_names,"_pc_plot1000PC3PC4.png"))`)
+
+PCA plots
+:::

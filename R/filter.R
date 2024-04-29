@@ -60,7 +60,11 @@ filter <- function(rgSet, sg = NULL, sampNames = "Sample_Name", save_barplot = T
     par(mar = c(max(4.1, max(nchar(ylabels)) / 2.2), 4.1, 4.1, 2.1))
     barplot(colMeans(detP), col = cols, las = 2,
             cex.names = 0.8, ylim = c(0, max(0.002, max(colMeans(detP)) * 2)), main = "Mean detection p-values")
-    graphics::abline(h = 0.05, col = "red")
+    if(max(0.002, max(colMeans(detP)) * 2)>0.002){
+      graphics::abline(h = 0.01, col = "red")
+    }else{
+      graphics::abline(h = 0.001, col = "red")
+    }
     graphics::legend("topleft", legend = levels(sampGroups), fill = levels(factor(cols)),
                      bg = "white")
     grDevices::dev.off()

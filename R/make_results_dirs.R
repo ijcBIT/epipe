@@ -22,6 +22,7 @@ make_results_dirs <- function(subf, results_folder = "./results/", analysis_fold
     results_folder = results_folder,
     qc_folder = paste(results_folder, subf, "/QC/", sep = .Platform$file.sep),
     ss_clean_path = paste(analysis_folder, subf, sep = .Platform$file.sep),
+    sexplot_folder = paste(results_folder, subf, "plots/sex/", sep = .Platform$file.sep),
     bplots_folder = paste(results_folder, subf, "plots/pca/bplots/", sep = .Platform$file.sep),
     corrplot_folder = paste(results_folder, subf, "plots/pca/corrplot/", sep = .Platform$file.sep),
     dmp_folder = paste(results_folder, subf, "dmps/", sep = .Platform$file.sep),
@@ -29,7 +30,9 @@ make_results_dirs <- function(subf, results_folder = "./results/", analysis_fold
     dmrs_folder = paste(results_folder, subf, "dmrs/", sep = .Platform$file.sep),
     pathway_folder = paste(results_folder, subf, "gopath/", sep = .Platform$file.sep),
     report_folder = paste(results_folder, subf, "reports/", sep = .Platform$file.sep),
-    temp = paste(analysis_folder, subf,"temp", sep = .Platform$file.sep)
+    temp = paste(analysis_folder, subf,"temp", sep = .Platform$file.sep),
+    heatmap_folder=paste(results_folder, subf, "plots/heatmap/", sep = .Platform$file.sep),
+    betas_folder=paste(results_folder, subf, "betas/", sep = .Platform$file.sep)
   )
   sapply(params, function(x) dir.create(x, recursive = TRUE, showWarnings = FALSE))
 

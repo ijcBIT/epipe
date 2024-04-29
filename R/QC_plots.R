@@ -22,45 +22,57 @@ qc<-function(rgSet,sampGroups=NULL, sampNames= "Sample_Name", pal=NULL,
 
   unlist(ss[order(Sample_Group),..idcol])->idx
   rgSet<-rgSet[,idx]
-
+  colData = rgSet@colData
+  Sample_Group = factor(colData[[sampGroups]])
+  
   Sample_Group<-setNames(Sample_Group,idx)
-
+  
   cols<-get_cols(factor_variable = Sample_Group, pal = pal)
   dir.create(qc_folder,recursive=T,showWarnings = F)
   minfi::qcReport(rgSet = rgSet,
                   pdf = paste0(qc_folder,"Report.pdf"),
-                  sampGroups = rgSet@colData[[sampGroups]],
-                  sampNames = rgSet@colData[[sampNames]])
-
-  dp <- densPlot(
-    rgSet, sg = Sample_Group,main = "Beta",
-    pal =pal#[!duplicated(cols)]
-  )
-  save_plot(dp, path=qc_folder, filename = "density_plot.png")
+                  sampGroups= rgSet@colData[[sampGroups]])
+                  #sampNames = rgSet@colData[[sampNames]])
+  
+  #### Density plot
+  
+  grDevices::png(file = paste0(qc_folder, "density_plot_before_norm.png"))
+  minfi::densityPlot(rgSet, 
+                     sampGroups = rgSet@colData[[sampGroups]],main = 'Beta values distribution before normalization')
+  grDevices::dev.off()
+  
+  # dp <- densPlot(
+  #   rgSet, sg = Sample_Group,main = "Beta",
+  #   pal =pal#[!duplicated(cols)] 
+  # )
+  # save_plot(dp, path=qc_folder, filename = "density_plot")
 
   # ggplot2::ggsave(filename = paste0(qc_folder,"density_plot.png"),
   #                 device = "png",plot = dp,
   #                 width = 10, height = 12)
-  # grDevices::png(file = paste0(qc_folder,"bean_plot.png"),
-  #                width = 960, # The width of the plot in inches
-  #                height = 1240) # The height of the plot in inches
-  beanplot <-minfi::densityBeanPlot(
-    rgSet, sampGroups = rgSet@colData[[sampGroups]],
-    pal=cols[!duplicated(cols)]
-  )
-
+  
+  
+  #### Bean plot
+  
+  # grDevices::png(file = paste0(qc_folder,"bean_plot.png"))
+  # minfi::densityBeanPlot(
+  #   rgSet, sampGroups = rgSet@colData[[sampGroups]],
+  #   pal=cols[!duplicated(cols)]
+  # ) 
   # grDevices::dev.off()
 
-  save_plot(beanplot, path=qc_folder, filename = "bean_plot.png")
+  #save_plot(beanplot, path=qc_folder, filename = "bean_plot")
+  
+  
+  #### Mean QC plot
+  
   mSet <- minfi::preprocessRaw(rgSet)
   qc   <- minfi::getQC(mSet)
-  # grDevices::png(file = paste0(qc_folder,"mean_qc.png"),   # The directory you want to save the file in
-  #                width = 960, # The width of the plot in inches
-  #                height = 960) # The height of the plot in inches
-  mean_qc <- minfi::plotQC(qc)
-#
-#   grDevices::dev.off()
-  save_plot(mean_qc, path=qc_folder, filename = "mean_qc.png")
+  grDevices::png(file = paste0(qc_folder,"mean_qc.png"))
+  minfi::plotQC(qc)
+  grDevices::dev.off()
+  #save_plot(mean_qc, path=qc_folder, filename = "mean_qc")
+  
 }
 
 #' Density Plot for Beta Values (ggplot2)

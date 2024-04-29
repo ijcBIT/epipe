@@ -1,0 +1,71 @@
+<!-- # Increment the index -->
+`r idx = idx+1` 
+<!-- # Generate a dynamic step title -->
+## `r paste0("Step ",idx,": Exploratory analysis")`
+
+Exploratory analysis allows to understand better the underlying data structure, distribution (outliers), relationships amongst variables and allows to identify potential trends. 
+
+First, we check the experimental design (balanced, unbalance) and whether there is any correlation amongst variables (biological as well as technical). 
+
+The plot below shows pairwise comparisons of all variables, highlighting significant correlations and similarities (Pearson corr. test for two continuous variable, chi-square/equal proportions for two categorical variables, Anova for a continuous and a categorical variable). 
+
+
+
+![ Variable association plot ](`r file.path(paths$qc_folder, "correlation_analysis.png")`){#fig-correlation_analysis}
+
+
+
+### Principal Component Analysis (PCA)
+
+Principle component analysis (PCA) is used simplify complex datasets by transforming them into a lower-dimensional space while retaining most of the relevant information. Visualizing principle component (PC) allows to identify clusters, outliers, trends or other potential trends.
+
+The following plots represent PCAs performed using the top 1000 most variable CpGs. Plotted are the first 4 principal components labeled with the variables of interest (sentrix id, sex sample group).  
+
+PCA plots based on the top 100, 5000 or 10000 most variable CpGs are located in the following directory: 
+
+```{r}
+# Display the Heatmap folder path
+paths$bplots_folder
+```
+
+
+::: {#fig-pca layout="[50,50]"}
+
+![](`r file.path(paths$bplots_folder, paste0(values_row$data_names,"_pc_plot1000PC1PC2.png"))`)
+
+![](`r file.path(paths$bplots_folder, paste0(values_row$data_names,"_pc_plot1000PC3PC4.png"))`)
+
+PCA plots
+:::
+
+#### PC correlation analysis
+
+Testing for significant correlations between principal components and (all) variables given in the sample sheet allos to identify batch effect and important biological variables. 
+
+```{r}
+# Display the Heatmap folder path
+paths$corrplot_folder
+```
+
+
+![Correlation plot](`r file.path(paths$corrplot_folder, paste0('/1000/',values_row$data_names,"_pca_corrplot1000.png.png"))`){#fig-Heatmap}
+
+
+
+
+### Heatmap 
+
+Hierarchical clustering based on pairwise distances provides another way to identify potential groups of samples. By default the heatmap function provides hierarchical clustering of a value matrix (beta values) by columns (samples) and rows (probes). The actual values are represented as colors (0=blue, 1=red). The heatmap below is created from the 1000 most variable CpG.
+
+Heatmaps in this context are useful to confirm an expected grouping as well as visualizing the individual values (and subsequently difference) for each group. 
+
+Heatmaps created with the top 100, 5000 and 1000 most variable CpGs are stored in the following directory: 
+
+```{r}
+# Display the Heatmap folder path
+paths$heatmap_folder
+```
+
+
+![Heatmap](`r file.path(paths$heatmap_folder, paste0(values_row$data_names,"_heatmap_1000.png"))`){#fig-Heatmap}
+
