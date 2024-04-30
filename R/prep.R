@@ -73,7 +73,7 @@ remove_cross_reactive_probes <- function(mSetSqn, sexchr) {
   probeID_start <- rownames(mSetSqn)
   if (annotation(mSetSqn)[1] == "IlluminaHumanMethylationEPICv2") {
     # Read the cross-reactive probe mask for EPICv2
-    mask <- qs::qread("data/EPICv2_xreactive.qs")
+    mask <- qs::qread("Reference/EPICv2_xreactive.qs")
     mSetSqn <- mSetSqn[!rownames(mSetSqn) %in% mask, ]
   } else {
     # For other arrays, use maxprobes::dropXreactiveLoci
