@@ -52,24 +52,5 @@ heatmap_top<-function(top_beta_100,ss,sampGroups,pal = RColorBrewer::brewer.pal(
 
 
 
-#' 
-#' #'
-#' 
-#' 
-#' heatmap_dmps<-()
-#' 
-#' dmps_f
-#' 
-#' 
-#' 
-#' result <- list()  # Create an empty list to store the results
-#' 
-#' for (i in levels(dmps_f$Contrast)) {
-#'   c <- head(dmps_f[dmps_f$Contrast == i, 'ProbeID'], 4)
-#'   probe_names<-as.character(c$ProbeID)
-#'   top4_betas_DMPs<-betas[which(rownames(betas) %in% probe_names),]
-#'   
-#' }
-
 
 

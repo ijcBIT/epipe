@@ -4,7 +4,7 @@
 \alias{summary_dmrs}
 \title{Summarize DMRs}
 \usage{
-summary_dmrs(dmrs, path = "/results/dmrs/", write = TRUE)
+summary_dmrs(dmrs, path = "/results/dmrs/", write = FALSE)
 }
 \arguments{
 \item{dmrs}{Data.table containing DMR information.}

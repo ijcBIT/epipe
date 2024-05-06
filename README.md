@@ -2,7 +2,7 @@
 
 ## Introduction 
 
-EPIPE is a bioinformatics pipeline designed for the analysis of differential methylation data obtained from microarrays. It implements the whole methylation array workflow steps from processing raw data to pathway annotation of the differentially methylation positions (DMP) and regions (DMR) found. 
+EPIPE is a bioinformatics pipeline designed for the analysis of methylation data obtained from microarrays. It implements the whole methylation array workflow steps from processing raw data to pathway annotation of the differentially methylation positions (DMP) and regions (DMR) found. 
 
 The main reasons to use it are: 
 

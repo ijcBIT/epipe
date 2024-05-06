@@ -16,6 +16,8 @@ library(crew.cluster)
 # Libraries from Illumina
 library(IlluminaHumanMethylationEPICv2manifest)
 library(IlluminaHumanMethylationEPICv2anno.20a1.hg38)
+library(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
+
 
 max_ncores=RcppParallel::defaultNumThreads() # Not in use but may be useful
 
@@ -164,7 +166,7 @@ targets <- tarchetypes::tar_map(
                             ContrastsDM = colnames(model$contrasts),
                             beta_normalized = betas,
                             p.value = 0.95,
-                            mDiff = 0.01,
+                            mDiff = mDiffDMP,
                             ann = ann,
                             writeOut = F),
              deployment = "worker"
@@ -182,7 +184,7 @@ targets <- tarchetypes::tar_map(
   #              dmps = dmps,path=file.path(paste0(custom_paths$dmp_folder,data_names))),
   #            error ="continue",deployment = "worker",memory = "transient"),
 
-  tar_target(dmps_f , filter_dmps(dmps, p.value = 0.05, mDiff = 0.01)),      # Choose filter for DMPs
+  tar_target(dmps_f , filter_dmps(dmps, p.value = p.valueDMP, mDiff = mDiffDMP)),      # Choose filter for DMPs
   tar_target(save_dmps_f,
              write.table(dmps_f,
                          file.path(
@@ -207,12 +209,12 @@ targets <- tarchetypes::tar_map(
   tar_target(dmpplots, plotDMP(dmps_f,path=custom_paths$dmpplots_folder),error ="continue"),   # Barplots hipo/hyper, genomic region, CpG islands.
   tar_target(dmrs,                                                              # Finds DMRs with dmrcate can be relaxed here and filter by HMFDR later
              find_dmrs(object=dmps_f,model=model,
-                       fdr = 0.01,bcutoff = 0.05, min.cpg=3),
+                       fdr = fdrDMR,bcutoff = 0.05, min.cpg=min.cpgDMR),
              deployment = "worker"),
   #tar_target(dmrs_battery,  priority = 1, error ="continue",                                       # DMRs distribution along params
              # apply_filter_dmrs(
              #   dmrs = dmrs,path=paste0(custom_paths$dmrs_folder,data_names))),
-  tar_target(dmrs_f, filter_dmrs(dmrs,p.value = "FDR", mDiff = 0.05, min.cpg=3)),
+  tar_target(dmrs_f, filter_dmrs(dmrs,p.value = "FDR", mDiff = 0.05, min.cpg=min.cpgDMR)),
   tar_target(save_dmrs,                                                          # Saves DMRs
              writexl::write_xlsx(
                dmrs, paste0(custom_paths$dmrs_folder,"_",data_names,".xlsx"))),
@@ -247,7 +249,11 @@ targets <- tarchetypes::tar_map(
 
 
   #####################################################################
-  tar_target(valss,makelist(vals)),
+  tar_target(valss,{
+    nrow(dmrs_summary)
+    valueslist = makelist(vals)
+    return(valueslist)
+  }),
   tar_target(ep,tibble::tibble(report_parameters,
                                values_row=jsonlite::toJSON(valss),
                                paths=jsonlite::toJSON(custom_paths),
@@ -256,9 +262,9 @@ targets <- tarchetypes::tar_map(
   # ))
   )),
   tar_quarto_rep(report,
-                 path = "test.qmd",
+                 path = "report.qmd",
                  execute_params = ep,
-                 priority = 0
+                 priority = 0,quiet=FALSE
   )
 )
 # quarto::quarto_render(input = "report.qmd",execute_params = tar_read("report_params_ex_EPIC")[1,])

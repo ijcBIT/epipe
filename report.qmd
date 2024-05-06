@@ -1,7 +1,8 @@
 ---
-title: "Differential DNA Methylation Analysis Workflow"
-author: "Izar de Villasante"
+title: "REPORT: DNA METHYLATION ANALYSIS"
 format: html
+embed-resources: true	
+
 server: shiny
 params:
   path_to_Samples_on_array_excel: "W:/GENOMICS_UNIT/SampleDB/Samples_on_array_last.xls"
@@ -11,15 +12,17 @@ params:
   par: 1 # test placeholder
   report_name: "default" # name to show as the first header
   qc_include: "true" # include qc section
+  corrplot_include: "true" #Include corrplots
   parameter_tunning_plots: "true" # include parameter tuning section
   code_fold: false
   show_warning: true
   shows_message: true
   
-  values_row: '[{"data_names":"test_set","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob"}]'
-  paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"]}'
+  values_row: '[{"data_names":"ex_EPIC","data_paths":"inst/extdata/EPIC/sample_sheet_EPIC.rds","arraytype":"EPIC","norm":"noob","project_name":"name","mDiffDMP":"0.01","p.valueDMP":"value","fdrDMR":"value","mdiffDMR":"value","min.cpgDMR":"value"}]'
+  paths: '{"results_folder":["results/"],"qc_folder":["results/ex_EPIC/QC/"],"ss_clean_path":["analysis/ex_EPIC"],"bplots_folder":["results/ex_EPIC/plots/pca/bplots/"],"corrplot_folder":["results/ex_EPIC/plots/pca/corrplot/"],"dmp_folder":["results/ex_EPIC/dmps/"],"dmpplots_folder":["results/ex_EPIC/dmps/"],"dmrs_folder":["results/ex_EPIC/dmrs/"],"pathway_folder":["results/ex_EPIC/gopath/"],"report_folder":["results/ex_EPIC/reports/"],"sexplot_folder":["results/ex_EPIC/plots/sex/"],"heatmap_folder":["results/ex_EPIC/plots/heatmap/"]}'
 ---
 ```{r}
+#| include: false
 library(data.table)
 library(shiny)
 library(DT)
@@ -32,8 +35,15 @@ library(rmarkdown)
 #| eval: true
 # Define a function to create a DataTable with download buttons
 dtable <- function(data) {
+  
+   formatted_data <- data
+  for (i in which(sapply(data, is.numeric))) {
+    formatted_data[[i]] <- formatC(data[[i]], digits = 10)
+  }
+  
+  
   DT::datatable(
-    { data },
+    { formatted_data },
     filter = 'top',
     fillContainer = FALSE,
     extensions = 'Buttons',
@@ -62,7 +72,7 @@ dtable <- function(data) {
       class = "display",
       server = TRUE
     ),
-  ) |> DT::formatRound(which(sapply(data, is.double)), 4)
+  ) |> DT::formatRound(which(sapply(formatted_data, is.double)), 4)
 }
 ```
 
@@ -116,88 +126,82 @@ library(targets)
 library(DT)
 ```
 
-# `r params$report_name` version 
-
-## Shiny Documents
-
-This Quarto document is made interactive using Shiny. Interactive documents allow readers to modify parameters and see the results immediately. Learn more about Shiny interactive documents at <https://quarto.org/docs/interactive/shiny/>.
-
-## Inputs and Outputs
-
-You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change. This demonstrates how a standard R plot can be made interactive:
+# [`r params$report_name` version]
 
 ```{r}
-sliderInput("bins", "Number of bins:", 
-            min = 1, max = 50, value = params$par)
-plotOutput("distPlot")
-```
-
-```{r}
-#| context: server
-output$distPlot <- renderPlot({
-   x <- faithful[, 2]  # Old Faithful Geyser data
-   bins <- seq(min(x), max(x), length.out = input$bins + 1)
-   hist(x, breaks = bins, col = 'darkgray', border = 'white',
-        xlab = 'Waiting time to the next eruption (in mins)',
-        main = 'Histogram of waiting times')
-})
-```
-
-```{r}
+#| include: false
 # Load necessary libraries
 library(targets)
+library(minfi)
 ```
-
-# AIM
-
-`r idx = 0`
-Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. [Platform: EPIC, EPICv2, 450k human, mouse microarrays] 
-
-# Description
-
-Some description here about the project (could be copied from project notes or Confluence page).
-
-# Data Inspection
-
-## Values
-
-It is always nice to check the values introduced by the user in the `values` data.frame as the full row of values:
 
 ```{r load values, asis}
 # Load values from JSON
 values_row <- jsonlite::fromJSON(params$values_row)
 
+project_name<-values_row[,'project_name']
+
+```
+
+
+Project: `r project_name`
+
+Platform: [EPIC,EPICv2,450K Human, mouse]
+
+Date: 
+`r format(Sys.time(), '%B %d, %Y')`
+
+
+# Description
+
+`r idx = 0`
+
+Detection and characterization of epigenetic changes between different conditions, genes potentially affected, and pathways involved. This report has been produced with Epipe, an analysis pipeline for DNA methylation microarrays. Epipe is freely available from [Github](https://github.com/ijcBIT/epipe).
+
+
+
+# 0. Set-up check
+
+## 0.1. Epipe configuration
+
+Check the configuration introduced by the user in the `values` data.frame (no empty fields allowed):
+
+
+```{r}
+# Load values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
+
 # Display the values
-values_row
+knitr::kable(subset(values_row, select=-project_name),format = "html")
 ```
 
 ```{r load paths}
 # Load paths from JSON
 paths <- jsonlite::fromJSON(params$paths)
+
 ```
 
-## Sample Sheet
+## 0.2. Sample Sheet
 
-The sample_sheet contains most of the information and it is typical to find annoying errors downstream if something is messed up with the sample sheet.
+Double check the sample_sheet (Raw data is available, factors are defined, sample names are uniq).
 
- Thus it is always good to double-check its content:
-
-```{r load ss}
+```{r load ss,interactive=TRUE}
 # Localize sample sheet to potentially improve loading speed
 local({
   # Load sample sheet
-  ss <- tar_read("ss")
+  eval(
+   substitute(
+     ss <- tar_read(ss_array),
+     env = list(ss_array=paste0("ss_",values_row$data_names))
+     )
+   )
+   
+  
+  #ss<-readRDS("inst/extdata/EPICv2/sample_sheet_EPICv2.rds")
   
   # Display the sample sheet using the custom DataTable function
   dtable(ss)
 })
-```
-
-## Step 1: Quality Control and Filtering
-
-```{r}
-# Display the QC folder path
-paths$qc_folder
 ```
 
 
@@ -205,9 +209,62 @@ paths$qc_folder
 #| results: asis
 #| echo: false
 #| include: !expr params$qc_include
+
 # paths <- jsonlite::fromJSON(params$paths)
+
 cat("\n")
 a <- knitr::knit_child('_qmd/_quality_control.qmd', quiet = TRUE)
 cat(a, sep = "\n")
+
+
 ```
+
+
+```{r child_exploratory_analysis}
+#| results: asis
+#| echo: false
+#| include: true
+
+#!expr params$corrplot_include
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+b <- knitr::knit_child('_qmd/_exploratory_analysis.qmd', quiet = TRUE)
+cat(b, sep = "\n")
+
+
+```
+
+
+
+```{r DMPs}
+#| results: asis
+#| echo: false
+#| include: true
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+c <- knitr::knit_child('_qmd/_DMPs.qmd', quiet = TRUE)
+cat(c, sep = "\n")
+
+```
+
+
+
+```{r DMRs}
+#| results: asis
+#| echo: false
+#| include: true
+
+# paths <- jsonlite::fromJSON(params$paths)
+cat("\n")
+d <- knitr::knit_child('_qmd/_DMRs.qmd', quiet = TRUE)
+cat(d, sep = "\n")
+N<-NULL
+```
+
+
+
+
+
 

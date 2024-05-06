@@ -4,7 +4,15 @@
 \alias{pca_res}
 \title{Perform Principal Component Analysis (PCA) on Beta Values}
 \usage{
-pca_res(beta_top100, scale = TRUE, center = TRUE)
+pca_res(
+  beta_top100,
+  ss,
+  sampGroups,
+  path = "./",
+  scale = TRUE,
+  center = TRUE,
+  filename = ""
+)
 }
 \arguments{
 \item{beta_top100}{A matrix of beta values.}

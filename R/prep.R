@@ -6,12 +6,14 @@
 #' @param remove_sex Logical, whether to remove sex chromosomes. Default is TRUE.
 #' @param sexchr Vector of chromosome names representing sex chromosomes (default is c("chrX", "chrY")).
 #' @param arraytype Type of array used for preprocessing. If provided, array-specific annotation is used.
+#' @param sexplot_folder path to the folder where plots will be saved.
+#' 
 #' @return Preprocessed MethylSet object.
 #'
 #' @import minfi
 #' @import maxprobes
 #' @export
-prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= NULL) {
+prep <- function(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL,sexplot_folder= './') {
   # Save the initial set of probe IDs
   probeID_start <- rownames(mSetSqn)
   

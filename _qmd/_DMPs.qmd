@@ -22,7 +22,9 @@ contrasts_name<-colnames(model$contrasts)
 ```
 
 
-ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
+ii) analyse the following contrasts (list of comparisons): 
+
+     `r contrasts_name`
 
 
 
@@ -39,9 +41,19 @@ ii) analyse the following contrasts (list of comparisons): `r contrasts_name`
 paths$dmp_folder
 ```
 
-- Minimum mean methylation difference between groups: mdiff > 0.1 
 
-- Significantly different when: p < 0.05 
+```{r}
+# Load mdiffDMP values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
+
+mdiffDMPs<-values_row[,'mDiffDMP']
+pvalueDMPs<-values_row[,'p.valueDMP']
+
+```
+
+- Minimum mean methylation difference between groups: mdiff > `r mdiffDMPs`
+
+- Significantly different when: p value < `r pvalueDMPs`
 
 
 

@@ -4,7 +4,13 @@
 \alias{prep}
 \title{Preprocess Methylation Data}
 \usage{
-prep(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL)
+prep(
+  mSetSqn,
+  remove_sex = TRUE,
+  sexchr = c("chrX", "chrY"),
+  arraytype = NULL,
+  sexplot_folder = "./"
+)
 }
 \arguments{
 \item{mSetSqn}{MethylSet object to be preprocessed.}
@@ -14,6 +20,8 @@ prep(mSetSqn, remove_sex = TRUE, sexchr = c("chrX", "chrY"), arraytype = NULL)
 \item{sexchr}{Vector of chromosome names representing sex chromosomes (default is c("chrX", "chrY")).}
 
 \item{arraytype}{Type of array used for preprocessing. If provided, array-specific annotation is used.}
+
+\item{sexplot_folder}{path to the folder where plots will be saved.}
 }
 \value{
 Preprocessed MethylSet object.

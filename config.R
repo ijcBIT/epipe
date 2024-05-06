@@ -32,9 +32,22 @@ arraytype <- c(
 
 project_name<-'Epipe test'
 
-values <- data.table(cbind(data_names,data_paths,arraytype,project_name))
-#values <- data.table(data_names="",data_paths="inst/extdata/EPICv2/sample_sheet_EPICv2.rds", arraytype="EPICv2")
+# Parameters for DMP: 
+mDiffDMP = 0.01
+p.valueDMP = 0.05
 
+# Parameters for DMR:
+min.cpgDMR = 3
+fdrDMR = 0.01
+mdiffDMR = 0.05
+
+values <- data.table(cbind(data_names,data_paths,arraytype,project_name,mDiffDMP,p.valueDMP,fdrDMR,mdiffDMR,min.cpgDMR))
+#values <- data.table(data_names="",data_paths="inst/extdata/EPICv2/sample_sheet_EPICv2.rds", arraytype="EPICv2")
+values$mDiffDMP=as.numeric(values$mDiffDMP)
+values$p.valueDMP=as.numeric(values$p.valueDMP)
+values$min.cpgDMR=as.numeric(values$min.cpgDMR)
+values$fdrDMR=as.numeric(values$fdrDMR)
+values$mdiffDMR=as.numeric(values$mdiffDMR)
 
 
 # Sample sheet:
@@ -113,7 +126,7 @@ Contrasts <- NULL
 # Add as many combinations as you would like
 
 report_colab <- tibble::tibble(
-  report_name = "report_colab",
+  report_name = "Colaborator",
   qc_include = "false",
   corrplot_include = "false",
   parameter_tunning_plots = "false",
@@ -124,7 +137,7 @@ report_colab <- tibble::tibble(
 )
 
 report_analyst <- tibble::tibble(
-  report_name = "report_analyst",
+  report_name = "Analyst",
   qc_include = "true",
   corrplot_include = "true",
   parameter_tunning_plots = "true",

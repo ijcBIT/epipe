@@ -15,11 +15,22 @@ Neighboring CpGs are known to be similarly methylated due to the enzymatic proce
 
 Thresholds used to filter DMRs: 
 
-- Minimum length: three CpGs  
+```{r}
+# Load mdiffDMP values from JSON
+values_row <- jsonlite::fromJSON(params$values_row)
 
-- Minimum mean group methylation differences: < 0.05 
+min.cpg<-values_row[,'min.cpgDMR']
+mdiffDMR<-values_row[,'mdiffDMR']
+fdrDMR<-values_row[,'fdrDMR']
+```
 
-- Statistically different at: FDR<0.01 (default). 
+
+
+- Minimum length: `r min.cpg` CpGs  
+
+- Minimum mean group methylation differences: < `r mdiffDMR`
+
+- Statistically different at: FDR< `r fdrDMR` . 
 
 
 ```{r}

@@ -165,13 +165,13 @@
     },
     "BiocManager": {
       "Package": "BiocManager",
-      "Version": "1.30.22",
+      "Version": "1.30.23",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "utils"
       ],
-      "Hash": "d57e43105a1aa9cb54fdb4629725acb1"
+      "Hash": "47e968dfe563c1b22c2e20a067ec21d5"
     },
     "BiocParallel": {
       "Package": "BiocParallel",
@@ -307,6 +307,12 @@
       ],
       "Hash": "32e34d6a6205a8e2ce5e4b50a9e90fd8"
     },
+    "DNAcopy": {
+      "Package": "DNAcopy",
+      "Version": "1.76.0",
+      "Source": "Bioconductor",
+      "Hash": "359d1dc501fca8350270b2f630e48690"
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.32",
@@ -357,6 +363,41 @@
         "sparseMatrixStats"
       ],
       "Hash": "71c2d178d33f9d91999f67dc2d53b747"
+    },
+    "ENmix": {
+      "Package": "ENmix",
+      "Version": "1.38.01",
+      "Source": "Bioconductor",
+      "Requirements": [
+        "AnnotationHub",
+        "Biobase",
+        "ExperimentHub",
+        "IRanges",
+        "R",
+        "RPMM",
+        "S4Vectors",
+        "SummarizedExperiment",
+        "doParallel",
+        "dynamicTreeCut",
+        "foreach",
+        "genefilter",
+        "geneplotter",
+        "gplots",
+        "grDevices",
+        "graphics",
+        "gtools",
+        "illuminaio",
+        "impute",
+        "irlba",
+        "matrixStats",
+        "methods",
+        "minfi",
+        "parallel",
+        "quadprog",
+        "stats",
+        "utils"
+      ],
+      "Hash": "8f8eae563382bf41d9fd299a59c31eb3"
     },
     "ExperimentHub": {
       "Package": "ExperimentHub",
@@ -699,6 +740,16 @@
       ],
       "Hash": "d282a10d009cb7c04e02073576b1f665"
     },
+    "IlluminaHumanMethylationEPICanno.ilm10b2.hg19": {
+      "Package": "IlluminaHumanMethylationEPICanno.ilm10b2.hg19",
+      "Version": "0.6.0",
+      "Source": "Bioconductor",
+      "Requirements": [
+        "R",
+        "minfi"
+      ],
+      "Hash": "f07873fef580506284dc356cda8f43f3"
+    },
     "IlluminaHumanMethylationEPICanno.ilm10b4.hg19": {
       "Package": "IlluminaHumanMethylationEPICanno.ilm10b4.hg19",
       "Version": "0.6.0",
@@ -930,6 +981,17 @@
         "methods"
       ],
       "Hash": "47f648d288079d0c696804ad4e55197e"
+    },
+    "RPMM": {
+      "Package": "RPMM",
+      "Version": "1.25",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "cluster"
+      ],
+      "Hash": "30e766c6a53c90830cb5313a1c57df7d"
     },
     "RSQLite": {
       "Package": "RSQLite",
@@ -1507,6 +1569,16 @@
       ],
       "Hash": "40415719b5a479b87949f3aa0aee737c"
     },
+    "brio": {
+      "Package": "brio",
+      "Version": "1.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "68bd2b066e1fe780bbf62fc8bcc36de3"
+    },
     "broom": {
       "Package": "broom",
       "Version": "1.0.5",
@@ -1571,7 +1643,7 @@
       "Package": "bslib",
       "Version": "0.7.0",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "base64enc",
@@ -1795,11 +1867,52 @@
       ],
       "Hash": "e4f8e89f5c705e9ec9c723dbb98d24c0"
     },
+    "cnv.methyl": {
+      "Package": "cnv.methyl",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "cnv.methyl",
+      "RemoteUsername": "ijcBIT",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "c13eb2e1e8404f9de3f01a64d2c8f900388e4ef8",
+      "Requirements": [
+        "Biobase",
+        "BiocGenerics",
+        "GenomicRanges",
+        "IRanges",
+        "IlluminaHumanMethylation450kanno.ilmn12.hg19",
+        "IlluminaHumanMethylationEPICanno.ilm10b4.hg19",
+        "R",
+        "S4Vectors",
+        "SummarizedExperiment",
+        "conumee",
+        "data.table",
+        "doParallel",
+        "foreach",
+        "fs",
+        "fst",
+        "grDevices",
+        "impute",
+        "itertools",
+        "limma",
+        "maxprobes",
+        "methods",
+        "minfi",
+        "parallel",
+        "pkgdown",
+        "randomForest",
+        "rlang",
+        "utils"
+      ],
+      "Hash": "4f00fd561105672fefc342a4cca1e5a0"
+    },
     "codetools": {
       "Package": "codetools",
       "Version": "0.2-20",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R"
       ],
@@ -1825,6 +1938,27 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "5d8225445acb167abf7797de48b2ee3c"
+    },
+    "conumee": {
+      "Package": "conumee",
+      "Version": "1.36.0",
+      "Source": "Bioconductor",
+      "Requirements": [
+        "DNAcopy",
+        "GenomeInfoDb",
+        "GenomicRanges",
+        "IRanges",
+        "IlluminaHumanMethylation450kanno.ilmn12.hg19",
+        "IlluminaHumanMethylation450kmanifest",
+        "IlluminaHumanMethylationEPICanno.ilm10b2.hg19",
+        "IlluminaHumanMethylationEPICmanifest",
+        "R",
+        "methods",
+        "minfi",
+        "rtracklayer",
+        "stats"
+      ],
+      "Hash": "92c4bc8c5298e7b91ac2d8095d54082f"
     },
     "cowplot": {
       "Package": "cowplot",
@@ -1983,6 +2117,19 @@
       ],
       "Hash": "24754fce82729ff85317dd195b6646a8"
     },
+    "desc": {
+      "Package": "desc",
+      "Version": "1.4.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "cli",
+        "utils"
+      ],
+      "Hash": "99b79fcbd6c4d1ce087f5c5c758b384f"
+    },
     "dichromat": {
       "Package": "dichromat",
       "Version": "2.0-0.1",
@@ -2044,6 +2191,26 @@
       ],
       "Hash": "e9eeef7931ee99ca0093f3f20b88e09b"
     },
+    "downlit": {
+      "Package": "downlit",
+      "Version": "0.4.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "brio",
+        "desc",
+        "digest",
+        "evaluate",
+        "fansi",
+        "memoise",
+        "rlang",
+        "vctrs",
+        "withr",
+        "yaml"
+      ],
+      "Hash": "14fa1f248b60ed67e1f5418391a17b14"
+    },
     "dplyr": {
       "Package": "dplyr",
       "Version": "1.1.4",
@@ -2079,6 +2246,17 @@
         "sitmo"
       ],
       "Hash": "824df2aeba88d701df5e79018b35b815"
+    },
+    "dynamicTreeCut": {
+      "Package": "dynamicTreeCut",
+      "Version": "1.63-1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "11d27b7a5f49a221224f56134f06b1f9"
     },
     "edgeR": {
       "Package": "edgeR",
@@ -2292,6 +2470,29 @@
       ],
       "Hash": "47b5f30c720c23999b913a1a635cf0bb"
     },
+    "fst": {
+      "Package": "fst",
+      "Version": "0.9.8",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "fstcore"
+      ],
+      "Hash": "34637e000c63c3de8d8aafceb82fd082"
+    },
+    "fstcore": {
+      "Package": "fstcore",
+      "Version": "0.9.18",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "4c33c7202fcfe741cdea205570305630"
+    },
     "futile.logger": {
       "Package": "futile.logger",
       "Version": "1.4.3",
@@ -2358,6 +2559,27 @@
         "survival"
       ],
       "Hash": "6f42a218e416f81103fc81f7216b9435"
+    },
+    "geneplotter": {
+      "Package": "geneplotter",
+      "Version": "1.80.0",
+      "Source": "Bioconductor",
+      "Requirements": [
+        "AnnotationDbi",
+        "Biobase",
+        "BiocGenerics",
+        "R",
+        "RColorBrewer",
+        "annotate",
+        "grDevices",
+        "graphics",
+        "grid",
+        "lattice",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "bdf15c04a0ec5b02f635d356d8865c02"
     },
     "generics": {
       "Package": "generics",
@@ -2659,7 +2881,7 @@
       "Package": "htmltools",
       "Version": "0.5.8.1",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "base64enc",
@@ -2747,6 +2969,15 @@
         "base64"
       ],
       "Hash": "cf58939c50f9a2c1533eac9ab8ae00a5"
+    },
+    "impute": {
+      "Package": "impute",
+      "Version": "1.76.0",
+      "Source": "Bioconductor",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "016250b0883de5d493207afe75fd72dc"
     },
     "interactiveDisplayBase": {
       "Package": "interactiveDisplayBase",
@@ -2865,7 +3096,7 @@
       "Package": "knitr",
       "Version": "1.46",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "evaluate",
@@ -2931,7 +3162,7 @@
       "Package": "lattice",
       "Version": "0.22-6",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R",
         "grDevices",
@@ -3267,7 +3498,7 @@
       "Package": "munsell",
       "Version": "0.5.1",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "colorspace",
         "methods"
@@ -3437,6 +3668,36 @@
       ],
       "Hash": "01f28d4278f15c76cddbea05899c5d6f"
     },
+    "pkgdown": {
+      "Package": "pkgdown",
+      "Version": "2.0.7",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "bslib",
+        "callr",
+        "cli",
+        "desc",
+        "digest",
+        "downlit",
+        "fs",
+        "httr",
+        "jsonlite",
+        "magrittr",
+        "memoise",
+        "purrr",
+        "ragg",
+        "rlang",
+        "rmarkdown",
+        "tibble",
+        "whisker",
+        "withr",
+        "xml2",
+        "yaml"
+      ],
+      "Hash": "16fa15449c930bf3a7761d3c68f8abf9"
+    },
     "plogr": {
       "Package": "plogr",
       "Version": "0.2.0",
@@ -3547,7 +3808,7 @@
       "Package": "promises",
       "Version": "1.3.0",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "R6",
         "Rcpp",
@@ -3628,6 +3889,17 @@
         "yaml"
       ],
       "Hash": "c94c271f9b998d116186a78b2a9b23c1"
+    },
+    "ragg": {
+      "Package": "ragg",
+      "Version": "1.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "systemfonts",
+        "textshaping"
+      ],
+      "Hash": "082e1a198e3329d571f4448ef0ede4bc"
     },
     "randomForest": {
       "Package": "randomForest",
@@ -4204,6 +4476,17 @@
       "Repository": "RSPM",
       "Hash": "3a1be13d68d47a8cd0bfd74739ca1555"
     },
+    "systemfonts": {
+      "Package": "systemfonts",
+      "Version": "1.0.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "cpp11"
+      ],
+      "Hash": "6d538cff441f0f1f36db2209ac7495ac"
+    },
     "tarchetypes": {
       "Package": "tarchetypes",
       "Version": "0.7.12",
@@ -4253,6 +4536,18 @@
         "yaml"
       ],
       "Hash": "35b83348e5cf547715687c93ce5c2126"
+    },
+    "textshaping": {
+      "Package": "textshaping",
+      "Version": "0.3.7",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "cpp11",
+        "systemfonts"
+      ],
+      "Hash": "997aac9ad649e0ef3b97f96cddd5622b"
     },
     "tibble": {
       "Package": "tibble",
@@ -4316,7 +4611,7 @@
       "Package": "tinytex",
       "Version": "0.50",
       "Source": "Repository",
-      "Repository": "https://packagemanager.posit.co/cran/__linux__/centos8/latest",
+      "Repository": "RSPM",
       "Requirements": [
         "xfun"
       ],
@@ -4435,6 +4730,13 @@
         "shiny"
       ],
       "Hash": "93e6b6c8ae3f81d4be77a0dc74e5cf5e"
+    },
+    "whisker": {
+      "Package": "whisker",
+      "Version": "0.4.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "c6abfa47a46d281a7d5159d0a8891e88"
     },
     "withr": {
       "Package": "withr",

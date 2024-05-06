@@ -1,17 +1,13 @@
 #' Correlation analysis
 #' 
+#' This function performs correlation analysis between metadata variables.
+#' 
 #' @param clean_object Rgset object
 #' @param path Path to save the correlation plot
 #' 
-
-
-# path<-custom_paths$qc_folder
-# 
-#x<-correlation_analysis(clean_EPICv2,
- #                        path=custom_paths$qc_folder)
-
-
-# Cal passar param path, perque el volem a correlation_plot. path--qc
+#' @return List of correlated variables and a plot
+#'
+#' @export
 
 correlation_analysis<-function(clean_object,path){
   data_prepared<-preparation(clean_object)
@@ -19,6 +15,7 @@ correlation_analysis<-function(clean_object,path){
   correlation_plot(listed_variables,data_prepared,path)
   return(listed_variables)
 }
+
 
 ## EXAMPLES: 
 
@@ -33,15 +30,14 @@ correlation_analysis<-function(clean_object,path){
 
 
 
-#' Sample sheet check and preparation 
+#' Sample sheet check and preparation for correlation analysis
 #' 
 #' @description Check and prepare the sample sheet for correlation analysis
 #' 
 #' @param object Clean object (Rgset)
 #' @import S4Vectors
 #' @import Biobase
-
-# Punt de partida-->clean object (includes sex variable)
+#' 
 
 preparation<-function(object){
   library(S4Vectors)
@@ -104,7 +100,8 @@ preparation<-function(object){
 
 #' List of correlated variables
 #'
-#' @description Obtain a list of variables that are correlated or its design is not well balanced, depending on each type of variables(numerical/categorical)
+#' @description Obtain a list of variables that are correlated or its design is not well balanced, depending on each type of variables(numerical/categorical).
+#' Pearson corr.test for two continuous variables, Anova for a continuous and a categorical, and Chi-square/equal proportions for two categorical variables. 
 #' 
 #' @param dataset Sample sheet 
 #'

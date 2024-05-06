@@ -10,8 +10,6 @@
 #' @param path Path to save the plot (default: './')
 
 
-# List with variable correlations
-#correlation_list<-list(c('Sample_Group','Sentrix_ID'),c('Condition','Sentrix_ID'),c('Type','arraytype'))
 
 
 

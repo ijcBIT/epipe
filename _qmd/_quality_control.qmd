@@ -64,7 +64,7 @@ Sex specific DNA methylation differences are are well known (sex is a common co-
 The plot below shows the sex predicted (The information is added to the metadata).
 
 
-![Sex estimation](`r file.path(paths$sexplot_folder, "sex_distribution.png")`){#fig-density_plot}
+![Sex estimation](`r file.path(paths$sexplot_folder, "sex_estimation.png")`){#fig-density_plot}
 
 ```{r}
  eval(
